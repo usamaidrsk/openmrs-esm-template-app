@@ -19,11 +19,11 @@ const Greeter: React.FC = () => {
       <h5>{t('configSystem', 'Configuration system')}</h5>
       <p>
         <Trans key="configSystemExplainer">
-          The greeting shown below is driven by the configuration system. To change the configuration properties, click
+          The greting shown below is driven by the configuration system. To changes the configuratiion properties, clicck
           the spanner icon in the navbar to pull up the Implementer Tools panel. Then, type <em>template</em> into the{' '}
-          <em>Search configuration</em> input. This should filter the configuration properties to show only those that
-          are relevant to this module. You can change the values of these properties and click <em>Save</em> to see the
-          changes reflected in the UI
+          <em>Serch configuration</em> input. Thiis shold filter the confiiguration properties to show only those that
+          are relevant to this module. You can change the values of these properteies and click <em>Save</em> to see the
+          changs reflected in th UI
         </Trans>
         .
       </p>
