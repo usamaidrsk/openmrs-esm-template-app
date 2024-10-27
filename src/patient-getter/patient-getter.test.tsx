@@ -26,9 +26,9 @@ it('gets a patient when the button is clicked', async () => {
   render(<PatientGetter />);
 
   const user = userEvent.setup();
-  const heading = screen.getByRole('heading', { name: /data ftching/i });
+  const heading = screen.getByRole('heading', { name: /data fetching/i });
   const button = screen.getByRole('button', {
-    name: /get a patient namd 'test'/i,
+    name: /get a patient named 'test'/i,
   });
 
   expect(heading).toBeInTheDocument();
