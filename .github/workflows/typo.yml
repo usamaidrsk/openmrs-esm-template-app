@@ -1,0 +1,80 @@
+name: Typo Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  spellcheck:
+    name: Check for typos
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v42
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Typos checker
+        run: |
+          curl -LsSf https://github.com/crate-ci/typos/releases/download/v1.16.23/typos-v1.16.23-x86_64-unknown-linux-musl.tar.gz | tar xzf -
+          sudo mv typos /usr/local/bin/
+
+      - name: Check for typos
+        id: typos
+        run: |
+          TYPOS_OUTPUT=$(typos ${{ steps.changed-files.outputs.all_changed_files }} --format brief 2>&1 || true)
+          echo "TYPOS_FOUND<<EOF" >> $GITHUB_ENV
+          echo "$TYPOS_OUTPUT" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Comment PR
+        if: env.TYPOS_FOUND != ''
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const typosFound = process.env.TYPOS_FOUND;
+            
+            let commentBody = `## 📝 Typo Check Results\n\n`;
+            
+            if (typosFound.trim() === '') {
+              commentBody += `✅ No typos found in the changes!`;
+            } else {
+              commentBody += `⚠️ Some potential typos were found in your changes:\n\n\`\`\`\n${typosFound}\n\`\`\`\n\n`;
+              commentBody += `Please review these potential issues. Note that some might be false positives or intentional.`;
+            }
+            
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('Typo Check Results')
+            );
+            
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: commentBody
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: commentBody
+              });
+            }
