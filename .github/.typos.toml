@@ -1,0 +1,8 @@
+[default]
+extend-ignore-re = [
+  "OpenMRS",  # Add project-specific terms that should be ignored
+]
+
+[default.extend-words]
+# Add custom word pairs if needed
+# wrong = "right"
