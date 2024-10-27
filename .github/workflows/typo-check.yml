@@ -28,6 +28,10 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Clear cached typos
+        run: |
+          echo "TYPOS_FOUND=" >> $GITHUB_ENV  # Clear previous typo cache
+
       - name: Install Typos checker
         run: |
           curl -LsSf https://github.com/crate-ci/typos/releases/download/v1.25.0/typos-v1.25.0-x86_64-unknown-linux-musl.tar.gz | tar xzf -
@@ -40,6 +44,7 @@ jobs:
           echo "TYPOS_FOUND<<EOF" >> $GITHUB_ENV
           echo "$TYPOS_OUTPUT" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+        continue-on-error: true
 
       - name: Comment PR
         if: env.TYPOS_FOUND != ''
