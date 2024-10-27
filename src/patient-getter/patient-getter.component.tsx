@@ -25,7 +25,7 @@ function PatientGetter() {
       <h5>{t('dataFetching', 'Data fetching')}</h5>
       <p>{t('patientGetterExplainer', 'Try clicking the button below to fetch a patient from the backend')}:</p>
       <Button onClick={() => setPatientName('test')}>{t('getPatient', 'Get a patient named')} 'test'</Button>
-      {isLoading ? <InlineLoading description={t('loading', 'Loading') + '...'} role="progressbar" /> : null}
+      {isLoading ? <InlineLoading description={t('loading', 'Loading') + '...'} role="progressbar" /> : null}Loding
       {patient ? (
         <Tile className={styles.tile}>
           {patient
